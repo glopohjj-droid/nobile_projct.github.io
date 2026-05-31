@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Nobile — Красный. Защищённый.</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, 'Inter', sans-serif;
+            background: radial-gradient(circle at 20% 30%, #0a0000, #030000);
+            color: #ffe0e0;
+            overflow-x: hidden;
+        }
+
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1.8rem 2rem;
+        }
+
+        .glass-card {
+            background: rgba(25, 5, 5, 0.65);
+            backdrop-filter: blur(12px);
+            border-radius: 2rem;
+            border: 1px solid rgba(255, 60, 60, 0.5);
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.4);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 25px 40px -14px rgba(255, 0, 0, 0.3);
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+            padding: 0.8rem 1.8rem;
+            background: rgba(20, 3, 3, 0.7);
+            backdrop-filter: blur(14px);
+            border-radius: 3rem;
+            border: 1px solid rgba(255, 60, 60, 0.6);
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffcccc, #ff4444, #cc0000);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.8rem;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: #ffc5c5;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.15s;
+            font-family: inherit;
+        }
+
+        .nav-btn:hover {
+            color: #ff5555;
+        }
+
+        .hero {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin: 2rem 0 3rem;
+        }
+
+        .badge {
+            background: rgba(255, 40, 40, 0.25);
+            border-radius: 40px;
+            padding: 0.4rem 1.3rem;
+            width: fit-content;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border: 1px solid #ff5555;
+            color: #ffbbbb;
+        }
+
+        h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #fff5f5, #ff8888, #ff3333);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .highlight {
+            color: #ff6666;
+        }
+
+        .encrypt-demo {
+            background: #1f0808bb;
+            border-radius: 2rem;
+            padding: 1.6rem;
+            border-left: 6px solid #ff3a3a;
+        }
+
+        .demo-chars {
+            font-size: 1.9rem;
+            letter-spacing: 5px;
+            background: #0a0000cc;
+            padding: 0.8rem 1.2rem;
+            border-radius: 1.5rem;
+            margin-top: 0.8rem;
+            color: #ffbbbb;
+            border: 1px solid #ff6666;
+            font-family: monospace;
+        }
+
+        .grid-2col {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .info-card {
+            padding: 1.8rem;
+        }
+
+        .icon-big {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #ff5e5e;
+        }
+
+        .btn-red {
+            background: linear-gradient(135deg, #cc1a1a, #8a0000);
+            border: none;
+            padding: 0.85rem 1.8rem;
+            border-radius: 3rem;
+            font-weight: 700;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.15s ease;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .btn-red:hover {
+            transform: scale(1.02);
+            background: linear-gradient(135deg, #ff2a2a, #aa0000);
+        }
+
+        .qr-mock {
+            background: #1a0505aa;
+            border-radius: 1.5rem;
+            padding: 1.2rem;
+            text-align: center;
+            border: 1px dashed #ff7777;
+        }
+
+        .qr-mock i {
+            font-size: 4rem;
+            color: #ff6a6a;
+        }
+
+        .key-mapping {
+            background: #1a0303;
+            border-radius: 1rem;
+            padding: 0.8rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            display: grid;
+            grid-template-columns: repeat(5, auto);
+            gap: 0.3rem 0.8rem;
+            border: 1px solid #ff5555;
+        }
+
+        footer {
+            margin-top: 4rem;
+            padding: 2rem 1rem;
+            border-top: 1px solid rgba(255, 70, 70, 0.4);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .footer-links a {
+            color: #ffbbbb;
+            text-decoration: none;
+            margin-right: 1.5rem;
+        }
+
+        .footer-links a:hover {
+            color: #ff5555;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(14px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.15s;
+        }
+
+        .modal.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: #1a0505ee;
+            backdrop-filter: blur(20px);
+            border-radius: 2rem;
+            max-width: 500px;
+            width: 90%;
+            padding: 2rem;
+            border: 2px solid #ff5555;
+            text-align: center;
+        }
+
+        .modal-content h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #ff6666;
+        }
+
+        .modal-content p {
+            margin: 0.8rem 0;
+            line-height: 1.6;
+        }
+
+        .close-modal-btn {
+            background: none;
+            border: none;
+            color: #ff8888;
+            font-size: 1.8rem;
+            cursor: pointer;
+            float: right;
+        }
+
+        @media (max-width: 760px) {
+            .container { padding: 1rem; }
+            h1 { font-size: 2.5rem; }
+            .navbar { flex-direction: column; gap: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="particles-canvas"></canvas>
+
+<div class="container">
+    <div class="navbar">
+        <div class="logo">NOBILE<span> — RED EDITION</span></div>
+        <div class="nav-links">
+            <button class="nav-btn" id="newsBtn">📰 Новости</button>
+            <button class="nav-btn" id="velrixBtn">⚡ Veltrix</button>
+        </div>
+    </div>
+
+    <div class="hero">
+        <div class="badge"><i class="fas fa-shield-alt"></i> 🔴 VELTRIX SECURITY // КРАСНЫЙ УРОВЕНЬ</div>
+        <h1>Мессенджер <span class="highlight">Nobile</span></h1>
+        <p style="font-size: 1.25rem;">Это не просто мессенджер будущего — это полностью защищённая платформа с уникальным шифрованием, где ваши сообщения видите только вы.</p>
+        
+        <div class="encrypt-demo">
+            <div style="font-weight: 700;">📩 <strong>Привет как дела?</strong> → зашифрованный вид:</div>
+            <div class="demo-chars"><i class="fas fa-lock"></i> :9_6;!Р(у*#к2$%@&^</div>
+            <div style="margin-top: 0.8rem;"><i class="fas fa-eye-slash"></i> Если мошенники перехватят чат — увидят лишь символы</div>
+        </div>
+
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+            <a href="https://t.me/NOBILE_PROJECT" target="_blank" class="btn-red"><i class="fab fa-telegram"></i> Мы в Telegram — следите за новостями</a>
+        </div>
+    </div>
+
+    <div class="grid-2col">
+        <div class="glass-card info-card">
+            <div class="icon-big"><i class="fas fa-server"></i></div>
+            <h3>Стандартные чаты</h3>
+            <p>Все обычные чаты и каналы хранятся на наших защищённых серверах. Данные зашифрованы при передаче и хранении.</p>
+        </div>
+        <div class="glass-card info-card">
+            <div class="icon-big"><i class="fas fa-microchip"></i></div>
+            <h3>Чаты с Veltrix</h3>
+            <p>Ключи шифрования хранятся только локально. Сообщения зашифрованы, даже мы не можем их прочитать. Абсолютная приватность.</p>
+        </div>
+    </div>
+
+    <div class="glass-card info-card" style="margin: 2rem 0;">
+        <h2><i class="fas fa-key"></i> Технология Veltrix Security</h2>
+        <p style="margin: 1rem 0;">Революционный подход к шифрованию переписки</p>
+        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+            <div><i class="fas fa-fingerprint"></i> <strong>Уникальные ключи для каждого чата</strong><br>Свои символы для каждой буквы. QR-код для передачи ключа.</div>
+            <div><i class="fas fa-mobile-alt"></i> <strong>Ключи только локально</strong><br>Серверы не имеют доступа.</div>
+        </div>
+        <div style="background:#1a0303cc; border-radius: 1.2rem; padding: 1rem; margin: 1rem 0;">
+            <div><strong>Пример подстановки:</strong> «Привет как дела?» → <code>:9_6;!Р(у*#к2$%@&^</code></div>
+            <div class="key-mapping" style="margin-top: 12px;">
+                <span>А:9</span> <span>Б_6</span> <span>В;!</span> <span>ГР(</span> <span>Ду*</span>
+                <span>Е#к</span> <span>Ж2$</span> <span>З%@</span> <span>И&^!</span> <span>К~+</span>
+            </div>
+            <div class="qr-mock" style="margin-top: 1rem;">
+                <i class="fas fa-qrcode"></i>
+                <div>📱 QR-код с ключом шифрования — покажите другу</div>
+            </div>
+        </div>
+    </div>
+
+    <h2>Всё, что нужно для общения</h2>
+    <div class="grid-2col">
+        <div class="glass-card info-card"><i class="fas fa-comments icon-big"></i><h3>Чаты и каналы</h3><p>С шифрованием Veltrix или стандартным — на ваш выбор.</p></div>
+        <div class="glass-card info-card"><i class="fas fa-phone-alt icon-big"></i><h3>Звонки</h3><p>Аудио и видео с полной защитой.</p></div>
+        <div class="glass-card info-card"><i class="fas fa-palette icon-big"></i><h3>Кастомизация</h3><p>Интерфейс под ваш стиль.</p></div>
+        <div class="glass-card info-card"><i class="fas fa-database icon-big"></i><h3>Локальные ключи</h3><p>Никаких облачных копий.</p></div>
+        <div class="glass-card info-card"><i class="fas fa-users icon-big"></i><h3>Группы до 200к</h3><p>Модерация, файлы, безопасно.</p></div>
+        <div class="glass-card info-card"><i class="fas fa-bell icon-big"></i><h3>Уведомления</h3><p>Гибкая настройка.</p></div>
+    </div>
+
+    <div class="glass-card info-card" style="text-align: center;">
+        <i class="fas fa-code-branch" style="font-size: 2rem; color:#ff5555;"></i>
+        <p style="font-size: 1.2rem;"><strong>🔥 1 человек работает над проектом</strong><br>Разработчик, криптограф, дизайнер — всё в одном лице. Создаю самый защищённый мессенджер.</p>
+        <div style="font-weight: 700; margin-top: 0.5rem;">Nobile — Мессенджер, которому можно доверять</div>
+    </div>
+
+    <div class="glass-card info-card" style="background: linear-gradient(145deg, #1a0505cc, #0a0000); border-color: #ff5555;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+            <div><i class="fas fa-rocket" style="color: #ff8888;"></i> <strong style="font-size: 1.4rem;">Готовимся к запуску!</strong><br>Следите за обновлениями в Telegram.</div>
+            <button id="launchModalBtn" class="btn-red"><i class="fas fa-bell"></i> Новости в Telegram</button>
+        </div>
+    </div>
+
+    <footer>
+        <div>© 2026 Nobile. Все права защищены.</div>
+        <div class="footer-links">
+            <a href="https://t.me/NOBILE_PROJECT" target="_blank">Мы в Telegram</a>
+            <a href="#">О проекте</a>
+            <a href="#">Безопасность</a>
+        </div>
+    </footer>
+</div>
+
+<div id="newsModal" class="modal">
+    <div class="modal-content">
+        <button class="close-modal-btn" onclick="closeNewsModal()">✖</button>
+        <i class="fas fa-newspaper" style="font-size: 3rem; color:#ff5555;"></i>
+        <h3>📰 Новости</h3>
+        <p style="font-size: 1.2rem; color: #ffaaaa;">📭 Пока нет новостей</p>
+        <p>Подпишись на Telegram-канал, чтобы первым узнавать о запуске и обновлениях!</p>
+        <a href="https://t.me/NOBILE_PROJECT" target="_blank" class="btn-red" style="display: inline-flex; margin-top: 1rem;"><i class="fab fa-telegram"></i> Перейти в Telegram</a>
+    </div>
+</div>
+
+<div id="velrixModal" class="modal">
+    <div class="modal-content">
+        <button class="close-modal-btn" onclick="closeVelrixModal()">✖</button>
+        <i class="fas fa-microchip" style="font-size: 3rem; color:#ff5555;"></i>
+        <h3>⚡ Технология Veltrix Security</h3>
+        <p><strong>Что это?</strong> Уникальная система шифрования, где каждый чат получает свою таблицу подстановки символов.</p>
+        <p><strong>Как работает?</strong> Вы показываете другу QR-код — и у него появляется ключ шифрования, действующий только для этого чата.</p>
+        <p><strong>Почему безопасно?</strong> Все ключи хранятся только локально на вашем устройстве. Никакие серверы не имеют к ним доступа.</p>
+        <p><strong>Пример:</strong> «Привет как дела?» → <code style="color:#ff8888;">:9_6;!Р(у*#к2$%@&^</code></p>
+        <p>Мошенники при перехвате увидят лишь хаотичные символы.</p>
+        <div style="background:#1a0303; border-radius: 1rem; padding: 0.5rem; margin-top: 0.5rem;">
+            <div class="key-mapping" style="grid-template-columns: repeat(5, auto);">
+                <span>А:9</span> <span>Б_6</span> <span>В;!</span> <span>ГР(</span> <span>Ду*</span>
+                <span>Е#к</span> <span>Ж2$</span> <span>З%@</span> <span>И&^!</span> <span>К~+</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<script>
+    (function() {
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+        
+        function resizeCanvas() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+        
+        function initParticles() {
+            const particleCount = Math.min(120, Math.floor(window.innerWidth / 10));
+            particles = [];
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    radius: Math.random() * 3 + 1.5,
+                    speedX: (Math.random() - 0.5) * 0.8,
+                    speedY: (Math.random() - 0.5) * 0.8,
+                    alpha: Math.random() * 0.5 + 0.3
+                });
+            }
+        }
+        
+        function drawParticles() {
+            if (!ctx || !width || !height) return;
+            ctx.clearRect(0, 0, width, height);
+            
+            for (let p of particles) {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 60, 60, ${p.alpha})`;
+                ctx.fill();
+                
+                p.x += p.speedX;
+                p.y += p.speedY;
+                
+                if (p.x < -20) p.x = width + 20;
+                if (p.x > width + 20) p.x = -20;
+                if (p.y < -20) p.y = height + 20;
+                if (p.y > height + 20) p.y = -20;
+            }
+            
+            requestAnimationFrame(drawParticles);
+        }
+        
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            initParticles();
+        });
+        
+        resizeCanvas();
+        initParticles();
+        drawParticles();
+        
+        const newsModal = document.getElementById('newsModal');
+        const velrixModal = document.getElementById('velrixModal');
+        const newsBtn = document.getElementById('newsBtn');
+        const velrixBtn = document.getElementById('velrixBtn');
+        const launchModalBtn = document.getElementById('launchModalBtn');
+        
+        window.closeNewsModal = function() {
+            newsModal.classList.remove('active');
+        };
+        
+        window.closeVelrixModal = function() {
+            velrixModal.classList.remove('active');
+        };
+        
+        if (newsBtn) newsBtn.onclick = () => newsModal.classList.add('active');
+        if (velrixBtn) velrixBtn.onclick = () => velrixModal.classList.add('active');
+        if (launchModalBtn) launchModalBtn.onclick = () => window.open('https://t.me/NOBILE_PROJECT', '_blank');
+        
+        newsModal.onclick = (e) => { if(e.target === newsModal) newsModal.classList.remove('active'); };
+        velrixModal.onclick = (e) => { if(e.target === velrixModal) velrixModal.classList.remove('active'); };
+    })();
+</script>
+</body>
+</html>
